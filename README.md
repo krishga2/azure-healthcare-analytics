@@ -67,4 +67,4 @@ azure-healthcare-analytics/
 ## Author
 
 Krishna Gattu — Senior Data Engineer
-10+ years experience in Azure, Databricks, Snowflake, Palantir Foundry
+6+ years experience in Azure, Databricks, Snowflake, Palantir Foundry
