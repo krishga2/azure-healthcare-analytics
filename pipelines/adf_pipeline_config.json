@@ -1,0 +1,30 @@
+{
+  "name": "pl_ingest_cms_hospital",
+  "description": "Ingests CMS Hospital General Information CSV into ADLS Gen2 Bronze container",
+  "properties": {
+    "activities": [
+      {
+        "name": "CopyHospitalData",
+        "type": "Copy",
+        "typeProperties": {
+          "source": {
+            "type": "DelimitedTextSource",
+            "storeSettings": {
+              "type": "HttpReadSettings",
+              "requestMethod": "GET"
+            }
+          },
+          "sink": {
+            "type": "DelimitedTextSink",
+            "storeSettings": {
+              "type": "AzureBlobFSWriteSettings"
+            }
+          },
+          "enableStaging": false
+        },
+        "inputs": [{ "referenceName": "ds_cms_http_source", "type": "DatasetReference" }],
+        "outputs": [{ "referenceName": "ds_adls_bronze_sink", "type": "DatasetReference" }]
+      }
+    ]
+  }
+}
