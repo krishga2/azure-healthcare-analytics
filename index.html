@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Krishna Gattu — Data Engineer</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --border: #1e1e2e;
+    --accent: #00d4ff;
+    --accent2: #7c3aed;
+    --accent3: #10b981;
+    --text: #e8e8f0;
+    --muted: #6b6b8a;
+    --mono: 'Space Mono', monospace;
+    --sans: 'Syne', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    overflow-x: hidden;
+  }
+
+  /* Grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Glow orbs */
+  .orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(100px);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .orb1 { width: 600px; height: 600px; background: rgba(124,58,237,0.08); top: -200px; right: -200px; }
+  .orb2 { width: 400px; height: 400px; background: rgba(0,212,255,0.06); bottom: 200px; left: -100px; }
+
+  /* Nav */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 20px 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    background: rgba(10,10,15,0.85);
+    backdrop-filter: blur(20px);
+  }
+
+  .nav-logo {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent);
+    letter-spacing: 2px;
+  }
+
+  .nav-links { display: flex; gap: 32px; }
+  .nav-links a {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 1px;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+
+  /* Hero */
+  .hero {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 120px 60px 80px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .hero-tag {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent);
+    letter-spacing: 3px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .hero-tag::before {
+    content: '';
+    width: 32px; height: 1px;
+    background: var(--accent);
+  }
+
+  .hero h1 {
+    font-size: clamp(52px, 8vw, 96px);
+    font-weight: 800;
+    line-height: 1.0;
+    letter-spacing: -2px;
+    margin-bottom: 8px;
+  }
+
+  .hero h1 .line2 {
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(232,232,240,0.3);
+  }
+
+  .hero-sub {
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--muted);
+    margin-top: 32px;
+    margin-bottom: 48px;
+    max-width: 560px;
+    line-height: 1.8;
+  }
+
+  .hero-cta {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary {
+    padding: 14px 32px;
+    background: var(--accent);
+    color: #000;
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+  }
+  .btn-primary:hover { background: #33ddff; transform: translateY(-2px); }
+
+  .btn-secondary {
+    padding: 14px 32px;
+    background: transparent;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-decoration: none;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: all 0.2s;
+    clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+  }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* Stats bar */
+  .stats-bar {
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    padding: 32px 60px;
+    display: flex;
+    gap: 0;
+    overflow: hidden;
+  }
+
+  .stat {
+    flex: 1;
+    text-align: center;
+    padding: 0 32px;
+    border-right: 1px solid var(--border);
+  }
+  .stat:last-child { border-right: none; }
+
+  .stat-num {
+    font-size: 40px;
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .stat-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* Sections */
+  section {
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 100px 60px;
+  }
+
+  .section-tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 3px;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+  }
+
+  .section-title {
+    font-size: clamp(32px, 4vw, 52px);
+    font-weight: 800;
+    letter-spacing: -1px;
+    margin-bottom: 60px;
+    line-height: 1.1;
+  }
+
+  /* Skills grid */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+
+  .skill-card {
+    background: var(--surface);
+    padding: 32px;
+    transition: background 0.2s;
+  }
+  .skill-card:hover { background: #16161f; }
+
+  .skill-category {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .skill-name {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: var(--text);
+  }
+
+  .skill-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 4px 10px;
+    background: rgba(0,212,255,0.08);
+    border: 1px solid rgba(0,212,255,0.15);
+    color: var(--accent);
+    letter-spacing: 1px;
+  }
+
+  .tag.purple {
+    background: rgba(124,58,237,0.08);
+    border-color: rgba(124,58,237,0.2);
+    color: #a78bfa;
+  }
+
+  .tag.green {
+    background: rgba(16,185,129,0.08);
+    border-color: rgba(16,185,129,0.2);
+    color: var(--accent3);
+  }
+
+  /* Experience */
+  .exp-list { display: flex; flex-direction: column; gap: 2px; }
+
+  .exp-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 36px 40px;
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 40px;
+    transition: border-color 0.2s;
+  }
+  .exp-item:hover { border-color: rgba(0,212,255,0.3); }
+
+  .exp-meta {}
+  .exp-date {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+  .exp-company {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .exp-location {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+
+  .exp-content {}
+  .exp-role {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--text);
+  }
+  .exp-bullets {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .exp-bullets li {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.7;
+    padding-left: 20px;
+    position: relative;
+  }
+  .exp-bullets li::before {
+    content: '//';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-size: 10px;
+  }
+
+  .exp-stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 20px;
+  }
+
+  /* Project */
+  .project-card {
+    border: 1px solid var(--border);
+    background: var(--surface);
+    padding: 48px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+  .project-card:hover { border-color: rgba(0,212,255,0.4); }
+
+  .project-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+  }
+
+  .project-number {
+    font-family: var(--mono);
+    font-size: 72px;
+    font-weight: 700;
+    color: rgba(0,212,255,0.06);
+    position: absolute;
+    top: 20px; right: 40px;
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  .project-tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .project-title {
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 16px;
+    letter-spacing: -0.5px;
+  }
+
+  .project-desc {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.8;
+    max-width: 640px;
+    margin-bottom: 32px;
+  }
+
+  .project-metrics {
+    display: flex;
+    gap: 40px;
+    margin-bottom: 32px;
+    padding: 24px 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .metric { }
+  .metric-val {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--accent3);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .metric-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+
+  .project-link {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    text-decoration: none;
+    letter-spacing: 2px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid rgba(0,212,255,0.3);
+    padding-bottom: 2px;
+    transition: all 0.2s;
+  }
+  .project-link:hover { gap: 14px; border-color: var(--accent); }
+
+  /* Contact */
+  .contact-section {
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+  }
+
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+
+  .contact-title {
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 800;
+    letter-spacing: -2px;
+    line-height: 1.0;
+  }
+
+  .contact-title span {
+    color: var(--accent);
+    display: block;
+  }
+
+  .contact-links {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .contact-link {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px 24px;
+    border: 1px solid var(--border);
+    text-decoration: none;
+    transition: all 0.2s;
+    background: var(--bg);
+  }
+  .contact-link:hover { border-color: var(--accent); transform: translateX(8px); }
+
+  .contact-link-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 4px;
+  }
+  .contact-link-value {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .contact-icon {
+    width: 40px; height: 40px;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 16px;
+  }
+
+  /* Footer */
+  footer {
+    position: relative;
+    z-index: 1;
+    padding: 24px 60px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  footer p {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-tag { animation: fadeUp 0.6s ease forwards; }
+  .hero h1 { animation: fadeUp 0.6s ease 0.1s both forwards; }
+  .hero-sub { animation: fadeUp 0.6s ease 0.2s both forwards; }
+  .hero-cta { animation: fadeUp 0.6s ease 0.3s both forwards; }
+
+  @media (max-width: 768px) {
+    nav { padding: 16px 24px; }
+    .nav-links { display: none; }
+    .hero { padding: 100px 24px 60px; }
+    .stats-bar { padding: 24px; flex-wrap: wrap; }
+    .stat { min-width: 50%; border-right: none; border-bottom: 1px solid var(--border); }
+    section { padding: 60px 24px; }
+    .exp-item { grid-template-columns: 1fr; gap: 16px; padding: 24px; }
+    .contact-grid { grid-template-columns: 1fr; gap: 40px; }
+    footer { padding: 20px 24px; flex-direction: column; gap: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+
+<nav>
+  <div class="nav-logo">KG // DATA ENGINEER</div>
+  <div class="nav-links">
+    <a href="#skills">Skills</a>
+    <a href="#experience">Experience</a>
+    <a href="#projects">Projects</a>
+    <a href="#contact">Contact</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="hero-tag">Available for new opportunities</div>
+  <h1>
+    Krishna<br>
+    <span class="line2">Gattu</span>
+  </h1>
+  <p class="hero-sub">
+    Senior Data Engineer with 10+ years building enterprise-scale data platforms.<br>
+    Palantir Foundry · Databricks · Snowflake · Azure · ETL/ELT · Delta Lake
+  </p>
+  <div class="hero-cta">
+    <a href="#projects" class="btn-primary">VIEW PROJECTS</a>
+    <a href="#contact" class="btn-secondary">GET IN TOUCH</a>
+  </div>
+</div>
+
+<!-- Stats -->
+<div class="stats-bar">
+  <div class="stat">
+    <div class="stat-num">10+</div>
+    <div class="stat-label">Years Experience</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">3</div>
+    <div class="stat-label">Cloud Platforms</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">6+</div>
+    <div class="stat-label">Core Technologies</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">M.S.</div>
+    <div class="stat-label">Computer Science</div>
+  </div>
+</div>
+
+<!-- Skills -->
+<section id="skills">
+  <div class="section-tag">// 01 — Expertise</div>
+  <h2 class="section-title">Technical Stack</h2>
+  <div class="skills-grid">
+    <div class="skill-card">
+      <div class="skill-category">Core Platforms</div>
+      <div class="skill-name">Palantir Foundry</div>
+      <div class="skill-tags">
+        <span class="tag">Code Repositories</span>
+        <span class="tag">Pipeline Builder</span>
+        <span class="tag">Ontology Design</span>
+        <span class="tag">Dataset Versioning</span>
+        <span class="tag">Lineage Tracking</span>
+      </div>
+    </div>
+    <div class="skill-card">
+      <div class="skill-category">Cloud Platforms</div>
+      <div class="skill-name">Azure + AWS</div>
+      <div class="skill-tags">
+        <span class="tag purple">ADF</span>
+        <span class="tag purple">Synapse</span>
+        <span class="tag purple">ADLS Gen2</span>
+        <span class="tag purple">Databricks</span>
+        <span class="tag purple">Key Vault</span>
+        <span class="tag purple">S3 / Redshift</span>
+      </div>
+    </div>
+    <div class="skill-card">
+      <div class="skill-category">Data Lakehouse</div>
+      <div class="skill-name">Delta Lake + Iceberg</div>
+      <div class="skill-tags">
+        <span class="tag green">Bronze-Silver-Gold</span>
+        <span class="tag green">Z-ORDER</span>
+        <span class="tag green">Unity Catalog</span>
+        <span class="tag green">Change Data Feed</span>
+      </div>
+    </div>
+    <div class="skill-card">
+      <div class="skill-category">Languages</div>
+      <div class="skill-name">Python + SQL + PySpark</div>
+      <div class="skill-tags">
+        <span class="tag">PySpark</span>
+        <span class="tag">SQL</span>
+        <span class="tag">Python</span>
+        <span class="tag">KQL</span>
+        <span class="tag">Shell</span>
+      </div>
+    </div>
+    <div class="skill-card">
+      <div class="skill-category">Orchestration</div>
+      <div class="skill-name">Airflow + dbt</div>
+      <div class="skill-tags">
+        <span class="tag purple">Apache Airflow</span>
+        <span class="tag purple">dbt</span>
+        <span class="tag purple">Incremental Models</span>
+        <span class="tag purple">Custom Macros</span>
+      </div>
+    </div>
+    <div class="skill-card">
+      <div class="skill-category">DevOps</div>
+      <div class="skill-name">CI/CD + IaC</div>
+      <div class="skill-tags">
+        <span class="tag green">Azure DevOps</span>
+        <span class="tag green">Terraform</span>
+        <span class="tag green">GitHub Actions</span>
+        <span class="tag green">Docker</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Experience -->
+<section id="experience">
+  <div class="section-tag">// 02 — Experience</div>
+  <h2 class="section-title">Work History</h2>
+  <div class="exp-list">
+
+    <div class="exp-item">
+      <div class="exp-meta">
+        <div class="exp-date">DEC 2023 — PRESENT</div>
+        <div class="exp-company">Apptega</div>
+        <div class="exp-location">DENTON, TX</div>
+      </div>
+      <div class="exp-content">
+        <div class="exp-role">Data Engineer</div>
+        <ul class="exp-bullets">
+          <li>Built ETL/ELT pipelines in ADF and Databricks consolidating compliance and audit data from 10+ source systems, cutting reporting latency by 60%</li>
+          <li>Delivered Bronze-Silver-Gold Delta Lake lakehouse on ADLS Gen2, reducing Power BI query time from 45 minutes to 10 minutes</li>
+          <li>Built Palantir Foundry Code Repository pipelines and Ontology object types for compliance entities, enabling analyst self-service</li>
+          <li>Developed dbt incremental models, custom macros, and schema tests — passed two external HIPAA and GDPR audits with zero findings</li>
+        </ul>
+        <div class="exp-stack">
+          <span class="tag">ADF</span><span class="tag">Databricks</span><span class="tag">Foundry</span><span class="tag">dbt</span><span class="tag">Delta Lake</span><span class="tag">Airflow</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="exp-item">
+      <div class="exp-meta">
+        <div class="exp-date">NOV 2022 — AUG 2023</div>
+        <div class="exp-company">Freddie Mac</div>
+        <div class="exp-location">DENTON, TX</div>
+      </div>
+      <div class="exp-content">
+        <div class="exp-role">Data Engineer</div>
+        <ul class="exp-bullets">
+          <li>Led Palantir Foundry mortgage data modernization — migrated 15+ loan data feeds, built Ontology object types for loans, borrowers, and servicers</li>
+          <li>Built Spark Structured Streaming pipeline processing 10M+ events/day at under 30-second latency with Kafka and Azure Event Hubs</li>
+          <li>Designed Snowflake clustering keys, partitioning, and materialized views — improved pipeline throughput by 45%</li>
+        </ul>
+        <div class="exp-stack">
+          <span class="tag">Palantir Foundry</span><span class="tag">Snowflake</span><span class="tag">Spark Streaming</span><span class="tag">Kafka</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="exp-item">
+      <div class="exp-meta">
+        <div class="exp-date">AUG 2018 — JUL 2021</div>
+        <div class="exp-company">Paycom</div>
+        <div class="exp-location">OKLAHOMA CITY, OK</div>
+      </div>
+      <div class="exp-content">
+        <div class="exp-role">Database Administrator / Data Engineer</div>
+        <ul class="exp-bullets">
+          <li>Administered MySQL, PostgreSQL, and Cassandra for payroll and HR compliance platforms serving thousands of SaaS clients</li>
+          <li>Built ADF pipelines ingesting employee lifecycle and benefits data into ADLS Gen2 for downstream HR analytics</li>
+          <li>Managed CI/CD in Azure DevOps for version-controlled ADF and database deployments across dev, staging, and production</li>
+        </ul>
+        <div class="exp-stack">
+          <span class="tag purple">MySQL</span><span class="tag purple">PostgreSQL</span><span class="tag purple">Cassandra</span><span class="tag purple">ADF</span><span class="tag purple">Azure DevOps</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- Projects -->
+<section id="projects">
+  <div class="section-tag">// 03 — Projects</div>
+  <h2 class="section-title">Featured Work</h2>
+  <div class="project-card">
+    <div class="project-number">01</div>
+    <div class="project-tag">Azure · PySpark · ADLS Gen2 · ADF</div>
+    <div class="project-title">Azure Healthcare Analytics Platform</div>
+    <p class="project-desc">
+      End-to-end data engineering pipeline processing CMS hospital quality data for 4,493 hospitals across all US states.
+      Built on a full Bronze-Silver-Gold medallion lakehouse architecture using Azure Data Factory for ingestion,
+      PySpark for transformation, and ADLS Gen2 for storage. Delivered three Gold-layer analytical datasets
+      covering hospital ratings by state, type, and ownership — surfacing insights like VA hospitals leading
+      all ownership types with a 4.18 average rating.
+    </p>
+    <div class="project-metrics">
+      <div class="metric">
+        <div class="metric-val">4,493</div>
+        <div class="metric-label">Hospitals processed</div>
+      </div>
+      <div class="metric">
+        <div class="metric-val">51</div>
+        <div class="metric-label">US states covered</div>
+      </div>
+      <div class="metric">
+        <div class="metric-val">3</div>
+        <div class="metric-label">Gold layer tables</div>
+      </div>
+      <div class="metric">
+        <div class="metric-val">1.3MB</div>
+        <div class="metric-label">Data in lake</div>
+      </div>
+    </div>
+    <div class="exp-stack" style="margin-bottom: 28px;">
+      <span class="tag">Azure Data Factory</span>
+      <span class="tag">ADLS Gen2</span>
+      <span class="tag">PySpark</span>
+      <span class="tag green">Bronze-Silver-Gold</span>
+      <span class="tag green">Medallion Architecture</span>
+      <span class="tag purple">Azure Databricks</span>
+      <span class="tag purple">GitHub CI/CD</span>
+    </div>
+    <a href="https://github.com/krishga2/azure-healthcare-analytics" target="_blank" class="project-link">
+      VIEW ON GITHUB →
+    </a>
+  </div>
+</section>
+
+<!-- Contact -->
+<section id="contact" class="contact-section" style="max-width: 100%; padding: 100px 60px;">
+  <div style="max-width: 1200px; margin: 0 auto;">
+    <div class="section-tag">// 04 — Contact</div>
+    <div class="contact-grid">
+      <div>
+        <h2 class="contact-title">
+          Let's build<br>
+          <span>something</span>
+          great.
+        </h2>
+      </div>
+      <div class="contact-links">
+        <a href="mailto:sxg41890@ucmo.edu" class="contact-link">
+          <div class="contact-icon">✉</div>
+          <div>
+            <span class="contact-link-label">Email</span>
+            <span class="contact-link-value">sxg41890@ucmo.edu</span>
+          </div>
+        </a>
+        <a href="https://github.com/krishga2" target="_blank" class="contact-link">
+          <div class="contact-icon">⌥</div>
+          <div>
+            <span class="contact-link-label">GitHub</span>
+            <span class="contact-link-value">github.com/krishga2</span>
+          </div>
+        </a>
+        <a href="https://linkedin.com/in/krishna-gattu" target="_blank" class="contact-link">
+          <div class="contact-icon">in</div>
+          <div>
+            <span class="contact-link-label">LinkedIn</span>
+            <span class="contact-link-value">linkedin.com/in/krishna-gattu</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 Krishna Gattu — Data Engineer</p>
+  <p>Built with HTML · Hosted on GitHub Pages</p>
+</footer>
+
+</body>
+</html>
